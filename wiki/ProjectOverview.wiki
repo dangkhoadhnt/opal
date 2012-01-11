@@ -23,6 +23,7 @@ They are arranged like this: Layer.Thread.Work package whereas each point is rep
 || FileSystem || - || FileSystem Storage || 0.0.0 ||
 || Backend || both || MySQL-Database || 1.0.0 ||
 || Backend || both || Database API || 1.0.1 ||
+|| Deamon || - || Archive Deamon || 1.0.2 ||
 || Backend || Listening Thread || Listen for PDF files send via FTP || 1.1.0 ||
 || Backend || Listening Thread || Put incoming files in queue || 1.1.1 ||
 || Backend || Listening Thread || Take file from queue and get indicate data || 1.1.2 ||
