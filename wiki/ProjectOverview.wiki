@@ -20,6 +20,7 @@ They are arranged like this: Layer.Thread.Work package whereas each point is rep
 
 
 || *Layer* || *Thread* || *Work Package* || *Arranged Numbers* ||
+|| FileSystem || - || FileSystem Storage || 0.0.0 ||
 || Backend || both || MySQL-Database || 1.0.0 ||
 || Backend || both || Database API || 1.0.1 ||
 || Backend || Listening Thread || Listen for PDF files send via FTP || 1.1.0 ||
@@ -34,4 +35,3 @@ They are arranged like this: Layer.Thread.Work package whereas each point is rep
 || Frontend || Web Frontend Thread || Show request data || 2.1.2 ||
 || Frontend || Web Frontend Thread || Define search criteria || 2.1.3 ||
 || Frontend || Web Frontend Thread || Send search request || 2.1.4 ||
-
