@@ -1,6 +1,8 @@
 pdftotext from stdin:
 pdftotext /dev/stdin - < testprint.ps
 
+pyPdf is unreliable on the text extraction!
+Will not be used!
 python pdf mangling:
 pyPdf Libary
 - is capable of extracting text from pdf files
