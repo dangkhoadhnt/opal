@@ -1,0 +1,3 @@
+pdftotext from stdin:
+pdftotext /dev/stdin - < testprint.ps
+
