@@ -1,3 +1,9 @@
 pdftotext from stdin:
 pdftotext /dev/stdin - < testprint.ps
 
+python pdf mangling:
+pyPdf Libary
+- is capable of extracting text from pdf files
+- is native mode
+- may be easier to implement
+- should work without temp file creation
