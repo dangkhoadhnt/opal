@@ -31,9 +31,17 @@ class Indexer:
         self.__patterns.append({'pattern': pattern, 'mode': mode, 'count': count})
 
     def __run_lines(self):
-        pass
+        print "running lines"
+        resultbuffer = []
+        for line in self.__text:
+            if line.find(self.__active_pattern['pattern']) >= 0:
+                start = self.__text.index(line) + 1
+                # not happy with this on, needs same treatment as in __run_words and nicer result list
+                resultbuffer.append(self.__text[start:start + self.__active_pattern['count']])
+        self.__results[self.__active_pattern['pattern']] = resultbuffer
 
     def __run_words(self):
+        print "running words"
         # put lines together to a single string
         text = ""
         for line in self.__text:
@@ -82,16 +90,18 @@ class Indexer:
 
     # actually do the searching
 
-    def run(self,text=""):
+    def run(self,text=[]):
         self.__text = text
         for pat in self.__patterns:
             self.__active_pattern = pat
+            print pat
             # create parser function dictionary, need to do this here, no way to use self outside of
             # object method. and no way to use __run_* without self
             # I even need to define this here, because python throws an exception, that there is no self.__active_pattern
             # when this is defined outside loop
-            functions = {1: self.__run_words(), 2: self.__run_lines()}
-            functions[self.__active_pattern['mode']]
+            functions = {1: self.__run_words, 2: self.__run_lines}
+            functions[self.__active_pattern['mode']]()
+            #functions
         return self.__results
 
 
@@ -109,6 +119,7 @@ indexer = Indexer()
 # add search patterns to indexer, this is intended to work
 # with a cups test page
 indexer.addPattern("Patient:")
+indexer.addPattern("Patient",mode=indexer.LINES,count=2)
 indexer.addPattern("Entnahmedatum:", count=2)
 indexer.addPattern("folgt")
 # now run the indexer and see the results :)
