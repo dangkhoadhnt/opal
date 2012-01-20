@@ -17,32 +17,49 @@ import string
 # by your main programm. You also need to strip out any surplus blanks.
 class Indexer:
     # constants
+    # Mode constants for parser
+    # these should probably be private and i'm thinking about a way to
+    # do this without loosing the comfort of comprehensive naming
     WORDS = 1
     LINES = 2
 
-    # initialize pattern list
+    # some initialisations
+    # pattern list
     __patterns = []
+    # result dictionary, actually will be a nested dictionary
     __results = {}
+    # text list
     __text = []
+    # active pattern dictionary
     __active_pattern = {}
 
-     # add a pattern to the list of patterns
+
+    # addPattern Method to add a nested pattern dictionary to the list of patterns
+    # takes the pattern as mandatory, mode (defaults to WORDS)
+    # and count (defaults to 1) as parameters
     def addPattern(self, pattern, mode=WORDS, count=1):
         self.__patterns.append({'pattern': pattern, 'mode': mode, 'count': count})
 
+
+    # __run_lines Method for LINES mode
+    # Searches for 'pattern' in each line of text and returns 'count' lines
+    # as result in a result list.
     def __run_lines(self):
-        print "running lines"
         resultbuffer = []
         for line in self.__text:
             if line.find(self.__active_pattern['pattern']) >= 0:
                 start = self.__text.index(line) + 1
-                # not happy with this on, needs same treatment as in __run_words and nicer result list
-                resultbuffer.append(self.__text[start:start + self.__active_pattern['count']])
+        if self.__text[start:start + self.__active_pattern['count']] not in resultbuffer:
+            for buff in (self.__text[start:start + self.__active_pattern['count']]):
+                resultbuffer.append(buff.strip())
         self.__results[self.__active_pattern['pattern']] = resultbuffer
 
+
+    # __run_words for WORDS mode
+    # Searches for 'patten' in text word by word and returns 'count' words
+    # as a result list
     def __run_words(self):
-        print "running words"
-        # put lines together to a single string
+        # put lines together to a single string that then can be split into words
         text = ""
         for line in self.__text:
             text = text + line
@@ -51,57 +68,77 @@ class Indexer:
         # and keep it reliably searchable
         text = string.replace(text, "\n"," ")
 
-        # split text string into its words
+        # split text string into a list of words by blanks
         wordlist = text.split(" ")
 
+        # get the search pattern from __active_pattern
+        # this is a tribute to the old version of this function and
+        # can be changed some time...
         pattern = self.__active_pattern['pattern']
 
-        # look for each pattern in the wordlist and return
-        # the pattern and its following word in the list
-        # this needs work!
-        # - implement a range of following words to return
-        # - write findings in a list of tuples and return this list
-        #   instead of printing to stdout
-
-        # buffer to hold results for this pattern in a list
+        # initialise a buffer to hold results for this pattern in a list
         resultbuffer = []
-        # iteration counter
+
+        # set findings counter to 0, we will stop searching for 'pattern'
+        # once we found all appearances.
         count = 0
+
         # start index set to 0 to start at beginning of wordlist
         start = 0
 
-        # search in wordlist for pattern until all where found, no point in searching to the end when all found
+        # search in wordlist for pattern until all where found,
+        # no point in searching to the end when all found
         while count < wordlist.count(pattern):
-            #
+            # get the index of next appearance of 'pattern' in the list
+            # starting at 'start' index point
             found = wordlist.index(pattern,start)
+
+            # raise start index for next run by one to get to the next list element
             start = found + 1
+
+            # raise find counter by one
+            # hell... i dont know if this is still needed...
             count = count + 1
+
+            # set the temporary result string to empty string
             resstring = ""
+
+            # take a slice of wordlist containing 'count' words after
+            # pattern position and construct a string containing those
+            # words seperated by blank.
             for buff in wordlist[start:start + self.__active_pattern['count']]:
                 resstring = resstring + " " + buff
+
+            # strip the resulting string from unprintable characters
             resstring = resstring.strip()
+
+            # put resulting string to the resultbuffer list, if it is not
+            # already in it, we don't want duplicates.
             if not resstring in resultbuffer:
                 try:
                     resultbuffer.append(resstring)
                 except:
                     print "error in resultbuffer"
+
+        # Finally append the resultbuffer list to Indexers result dictionary
         self.__results[pattern] = resultbuffer
 
 
-    # actually do the searching
-
+    # The run method calling the private parser methods sequentially
+    # for each pattern.
     def run(self,text=[]):
         self.__text = text
         for pat in self.__patterns:
             self.__active_pattern = pat
-            print pat
+# This is for debugging only
+#            print pat
+# end debug
             # create parser function dictionary, need to do this here, no way to use self outside of
             # object method. and no way to use __run_* without self
             # I even need to define this here, because python throws an exception, that there is no self.__active_pattern
             # when this is defined outside loop
             functions = {1: self.__run_words, 2: self.__run_lines}
             functions[self.__active_pattern['mode']]()
-            #functions
         return self.__results
 
 
@@ -118,7 +155,6 @@ p.close()
 indexer = Indexer()
 # add search patterns to indexer, this is intended to work
 # with a cups test page
-indexer.addPattern("Patient:")
 indexer.addPattern("Patient",mode=indexer.LINES,count=2)
 indexer.addPattern("Entnahmedatum:", count=2)
 indexer.addPattern("folgt")
